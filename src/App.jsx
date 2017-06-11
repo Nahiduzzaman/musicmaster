@@ -1,18 +1,19 @@
 import React,{Component} from 'react';
 import './App.css';
 import {FormGroup, FormControl, InputGroup, Glyphicon} from 'react-bootstrap';
-
+import Profile from './Profile';
 class App extends Component{
     constructor(props){
     	super(props);
     	this.state = {
-        query:''
+        query:'',
+        artist:null
       };
     }
 
     search(){
       console.log('this.state', this.state);
-      const TOKEN = 'BQDg5xs29jHVTJDUtdlpqJTx2lxY2tf2SlGaaz2vwxTXojz9g6dbHklSSAdb_03Seml3iKCu_ttNPXxATajpDmNO1WKgH_U5rzsBU4vmIb_AqRE_Qa3z1NFh8_I5RfXeKSozapVaIGYloOMPbOc6YffKOpyn3AZQJw';
+      const TOKEN = 'BQDOLTcxVtxyRRNZcQ-_0U7Xehe-8e50BNs_h24on7_PqSohwBqrpBvdPb5mqzowXYCPStqkgcXAbew1NfYI_2TUfxO4yPPckKi2OS8tY4D4RkoCKQO2WhY1XPm5FPfkGBMX82hycpefX17BgE8jwDihsi-C9qfPEw';
       const BASE_URL = 'https://api.spotify.com/v1/search?';
       const FETCH_URL = BASE_URL + 'q=' + this.state.query + '&type=artist&limit=1&access_token='+ TOKEN;
       console.log('FETCH_URL',FETCH_URL);
@@ -21,7 +22,9 @@ class App extends Component{
       })
       .then(response => response.json())
       .then(json => {
-          const artist = 
+          const artist = json.artists.items[0];
+          console.log('artist',artist);
+          this.setState({artist:artist});
       });
     }
     render() {
@@ -46,10 +49,9 @@ class App extends Component{
                     </InputGroup.Addon>
                   </InputGroup>
                 </FormGroup>
-                <div className="Profile">
-                    <div>Artist Picture</div>
-                    <div>Artist Name</div>
-                </div>
+                <Profile
+                  artist={this.state.artist}
+                />
                 <div className="Gallery">
                     Gallery
                 </div>
