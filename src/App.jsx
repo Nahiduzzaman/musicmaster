@@ -7,14 +7,16 @@ class App extends Component{
     	super(props);
     	this.state = {
         query:'',
-        artist:null
+        artist:null,
+        tracks:null
       };
     }
 
     search(){
       console.log('this.state', this.state);
-      const TOKEN = 'BQDOLTcxVtxyRRNZcQ-_0U7Xehe-8e50BNs_h24on7_PqSohwBqrpBvdPb5mqzowXYCPStqkgcXAbew1NfYI_2TUfxO4yPPckKi2OS8tY4D4RkoCKQO2WhY1XPm5FPfkGBMX82hycpefX17BgE8jwDihsi-C9qfPEw';
+      const TOKEN = 'BQCOkBPhmvYrJr7xd5rZ2Xk4rkvZX0CW4b3j5q5UhFXXBf93WulpwSqfM72RIkieyGXWfEAl9JewFXKOpwV0E74988cGeyCLrpU0y34OU_RRzZYKg8oUMLfwxggKVGH466K_RQR7u-wIKmunm023-WwhNjRAfSzlkw';
       const BASE_URL = 'https://api.spotify.com/v1/search?';
+      const ALBUM_URL = 'https://api.spotify.com/v1/artists/';
       const FETCH_URL = BASE_URL + 'q=' + this.state.query + '&type=artist&limit=1&access_token='+ TOKEN;
       console.log('FETCH_URL',FETCH_URL);
       fetch(FETCH_URL,{
@@ -25,7 +27,20 @@ class App extends Component{
           const artist = json.artists.items[0];
           console.log('artist',artist);
           this.setState({artist:artist});
+          const ALBUM_FETCH_URL = ALBUM_URL + artist.id + '/top-tracks?country=US&access_token='+ TOKEN;
+          console.log('ALBUM_FETCH_URL',ALBUM_FETCH_URL);
+          fetch(ALBUM_FETCH_URL,{
+            method: 'GET'
+          })
+          .then(response => response.json())
+          .then(json => {
+            console.log('artist\'s top-tracks',json);
+            const { tracks } = json;
+            this.setState({tracks:tracks}); // this line can be re-written as 'this.setState({tracks})', because key and value has same name!  
+          })
       });
+
+
     }
     render() {
         return (
@@ -49,12 +64,19 @@ class App extends Component{
                     </InputGroup.Addon>
                   </InputGroup>
                 </FormGroup>
-                <Profile
-                  artist={this.state.artist}
-                />
-                <div className="Gallery">
-                    Gallery
-                </div>
+                {
+                  this.state.artist !== null
+                  ? <div>
+                      <Profile
+                         artist={this.state.artist}
+                      />
+                      <div className="Gallery">
+                        Gallery
+                      </div>
+                    </div>
+                  : <div></div>
+                }
+
             </div>
         );
     }
